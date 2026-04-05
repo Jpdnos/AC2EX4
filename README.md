@@ -5,21 +5,23 @@ Como Executar
 Certifique-se de ter o Python 3 instalado em sua máquina.
 
 1. Clone o repositório:
-
-Bash
+```bash
 git clone <url-do-seu-repositorio>
 cd <nome-da-pasta>
+```
 
 2. Configure o ambiente virtual (recomendado):
 
-Bash
+```bash
 # Criar o ambiente
 python3 -m venv venv
 
 # Ativar o ambiente (Linux/macOS)
 source venv/bin/activate
+```
 
 3. Execute o script:
 
-Bash
+```bash
 python3 teste.py
+```
