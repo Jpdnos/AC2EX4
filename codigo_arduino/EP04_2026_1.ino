@@ -1,7 +1,20 @@
 /*
  * Projeto: ULA 4 Bits com Indicador de Próxima Instrução (--)
- * O símbolo -- aparece acima da instrução apontada pelo PC.
+ * O símbolo -- aparece acima da instrucao apontada pelo PC.
+ *  
+ * Banco de Registradores - vetor com 4 posições:
+ *
+ * PC (Program Counter): Índice da próxima instrução a ser executada no vetor memória.
+ * Comeca em 0 e e incrementado a cada instrucao executada.
+ * 
+ * W :Resultado da última operação executada pela ULA.
+ * 
+ * X :Operando A (primeiro argumento) da última instrução executada.
+ *
+ * Y :Operando B (segundo argumento) da última instrução executada.
  */
+ 
+
 
 const int leds[] = {13, 12, 11, 10}; 
 String memoria[100];           
@@ -14,26 +27,22 @@ void setup() {
   for (int i = 0; i < 4; i++) pinMode(leds[i], OUTPUT);
   Serial.println("Aguardando carga do programa");
 }
-
 int hexToVal(char c) {
   if (c >= '0' && c <= '9') return c - '0';
   if (c >= 'A' && c <= 'F') return c - 'A' + 10;
   if (c >= 'a' && c <= 'f') return c - 'a' + 10;
   return 0;
 }
-
 char valToHex(int v) {
   v &= 0xF; 
   if (v < 10) return v + '0';
   return (v - 10) + 'A';
 }
-
 void mostrarNosLeds(int valor) {
   for (int i = 0; i < 4; i++) {
     digitalWrite(leds[i], (valor >> (3 - i)) & 0x01);
   }
 }
-
 int calcularULA(int x, int y, int s) {
   int nx = (~x) & 0xF;
   int ny = (~y) & 0xF;
@@ -58,27 +67,27 @@ int calcularULA(int x, int y, int s) {
   }
 }
 
-// --- FUNÇÃO DE DUMP COM INDICADOR MÓVEL ---
+// FUNCAO DE DUMP COM O INDICADOR  
 void realizarDump() {
   int pc = registradores[0];
 
-  // 1. Imprime a linha do indicador (--)
+  // Imprime a linha do indicador (--)
   // "Memoria: |" tem 11 caracteres. O primeiro '--' deve alinhar com a instrução 0.
-  Serial.print("           "); // 11 espaços para alinhar com o início do conteúdo da barra
+  Serial.print("           "); //  espaços para alinhar com o inicio do conteudo da barra
   for (int i = 0; i < pc; i++) {
-    Serial.print("      "); // 6 espaços para cada instrução já passada
+    Serial.print("      "); // espacos para cada instrucao já passada
   }
   Serial.println("--");
 
-  // 2. Imprime a linha da Memória
+  // Imprime a linha da memoria
   Serial.print("Memoria: | ");
   for (int i = 0; i < totalInstrucoes; i++) {
     Serial.print(memoria[i]);
     Serial.print(" | ");
   }
-  Serial.println("    |"); // Espaço vazio no final
+  Serial.println("    |"); // Espaco vazio no final
 
-  // 3. Imprime a linha dos Registradores
+  // Imprime a linha dos registradores
   Serial.print("Registradores: | ");
   for (int i = 0; i < 4; i++) {
     Serial.print(valToHex(registradores[i]));
@@ -88,67 +97,98 @@ void realizarDump() {
 }
 
 void loop() {
+  // Verifica se há dados na serial E se ainda nao estamos em modo de execução
+  // (durante a execucao e ignorado entradas seriais)
   if (Serial.available() > 0 && !modoExecucao) {
+
+    // Le toda a string recebida de uma vez e remove espaços/quebras de linha nas bordas
     String input = Serial.readString();
     input.trim();
 
+    // Usuario respondeu "S" para iniciar a execução 
     if (input.equalsIgnoreCase("S")) {
       if (totalInstrucoes > 0) {
-        modoExecucao = true;
-        registradores[0] = 0; 
+        modoExecucao = true;   // ativa o modo de execução no próximo ciclo do loop
+        registradores[0] = 0; // garante que o PC começa do inicio da memoria
       }
-    } 
+    }
+
+    // Usuario enviou instruções para carregar na memoria 
     else {
-      // Carga do Vetor
       int len = input.length();
+
+      // Percorre a string recebida de 3 em 3 caracteres procurando instrucoes validas
       for (int i = 0; i <= len - 3; i++) {
-        String code = input.substring(i, i + 3);
+        String code = input.substring(i, i + 3); // extrai a instrucao
+
+        // So armazena se nao houver espaço dentro dos 3 caracteres
+        // (espaco indicaria que pegamos partes de duas instruções separadas)
         if (code.indexOf(' ') == -1) {
-          memoria[totalInstrucoes++] = code;
-          i += 2; 
+          memoria[totalInstrucoes++] = code; // salva instrução na proxima posicao livre
+          i += 2; // avança mais 2 (o for já avança 1), pulando os outros chars dessa instrução
         }
       }
+
+      // Exibe o estado da memoria logo apos a carga para o usuário confirmar
       Serial.println("Carga do vetor:");
       realizarDump();
+
+      // Aguarda confirmacao do usuário 
       Serial.println("Deseja executar o programa (S/N)?");
     }
   }
 
+  // Modo de execucao ativo: processa uma instrução por ciclo do loop 
   if (modoExecucao) {
-    if (registradores[0] < totalInstrucoes) {
-      // Pequeno atraso antes de mostrar o dump da execução para dar tempo de ler
-      if (registradores[0] == 0) delay(1000); 
 
+    // Ainda existem instrucoes a executar (PC nao ultrapassou o total carregado)
+    if (registradores[0] < totalInstrucoes) {
+
+      // Delay para o usuario ler a mensagem ,antes de começar o dump
+      if (registradores[0] == 0) delay(1000);
+
+      // Busca na memoria a instrucao apontada pelo PC
       String instrucao = memoria[registradores[0]];
-      
+
+      // Decodifica os tres algarismos da instrução: X (operando A), Y (operando B), S (operação)
       int x = hexToVal(instrucao.charAt(0));
       int y = hexToVal(instrucao.charAt(1));
       int s = hexToVal(instrucao.charAt(2));
 
+      // Executa a operacao na ULA e obtém o resultado W
       int w = calcularULA(x, y, s);
 
-      // Atualiza banco de registradores ANTES do Dump
-      registradores[2] = x;    
-      registradores[3] = y;    
-      registradores[1] = w;    
-      registradores[0]++; // Incrementa PC (indica a PRÓXIMA instrução)
+      // Atualiza o banco de registradores com os valores da instrução
+      registradores[2] = x;    // X: operando A usado
+      registradores[3] = y;    // Y: operando B usado
+      registradores[1] = w;    // W: resultado da ULA
+      registradores[0]++;      // PC: aponta para a proxima instrução
 
+      // Resultado nos leds
       mostrarNosLeds(w);
-      
-      if (registradores[0] == 1) Serial.println("Após a execução da primeira instrução:");
-      else if (registradores[0] == 2) Serial.println("Após a execução da segunda instrução:");
+
+      // Mensagem indicando qual instrucao acabou de ser executada
+      if (registradores[0] == 1)
+        Serial.println("Apos a execucao da primeira instrucao:");
+      else if (registradores[0] == 2)
+        Serial.println("Apos a execucao da segunda instrucao:");
       else {
-        Serial.print("Após a execução da instrução ");
+        Serial.print("Apos a execucao da instrucao ");
         Serial.print(registradores[0]);
         Serial.println(":");
       }
 
+      // Exibe a memoria e os registradores apos a execucao da instrucao
       realizarDump();
+
+      // Pausa de 4 segundos para acompanhar o estado dos LEDs e do dump
       delay(4000);
-    } 
+    }
+
+    // PC chegou ao fim: todas as instrucoes foram executadas
     else {
       Serial.println("Programa concluido!");
-      modoExecucao = false;
+      modoExecucao = false; // volta ao modo de carga para um provavel novo programa
     }
   }
 }
