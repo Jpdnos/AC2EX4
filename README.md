@@ -26,3 +26,4 @@ source venv/bin/activate
 ```bash
 python3 teste.py
 ```
+OBS.: O arquivo testeula.ula é apenas um arquivo de teste , para verificar se o programa tava funcionando.
