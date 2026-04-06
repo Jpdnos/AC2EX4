@@ -4,7 +4,7 @@ import os
 ARQ_FONTE = "testeula.ula"
 ARQ_HEX = "testeula.hex"
 
-# Tabela de mnemonicos conforme a Figura 2
+# Tabela de mnemonicos 
 MNEMONICOS = {
     "CopiaA": "0", "CopiaB": "1", "AxB": "2", "nAxnB": "3",
     "AeBn": "4", "nB": "5", "nAonB": "6", "nA": "7",
