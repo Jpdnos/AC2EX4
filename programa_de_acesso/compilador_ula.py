@@ -52,13 +52,15 @@ def compilar():
                     if eh_hex_valido(val):
                         y_atual = val.upper()
                 elif var == "W":
-                    # Busca mnemonico. Se nao existir na tabela, ignora a linha.
+                    # Busca case-insensitive no dicionario de mnemônicos.
+                    # Percorre todos os pares (mnemonico, codigo) e armazena o codigo
+                    # do mnemônico que bater com val (ignorando maiusculas/minusculas).
+                    # Se nao encontrar nenhum, cod_s permanece None e a linha será ignorada.
                     cod_s = None
                     for mnem, codigo in MNEMONICOS.items():
                         if mnem.lower() == val.lower():
                             cod_s = codigo
                             break
-                    
                     if cod_s:
                         # Gera a instrucao final de 3 caracteres (X + Y + S)
                         instrucao = f"{x_atual}{y_atual}{cod_s}"
