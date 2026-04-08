@@ -30,4 +30,4 @@ venv\Scripts\activate
 cd programa_de_acesso/
 python3 compilador_ula.py
 ```
-OBS.: O arquivo testeula.ula é apenas um arquivo de teste , para verificar se o programa tava funcionando.
+OBS.: O arquivo testeula.ula é apenas um arquivo de teste, para verificar se o programa tava funcionando.
