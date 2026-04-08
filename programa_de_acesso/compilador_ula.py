@@ -17,13 +17,14 @@ def eh_hex_valido(val):
     return len(val) == 1 and val.upper() in "0123456789ABCDEF"
 
 def compilar():
+    # Verifica se o arquivo fonte existe antes de tentar abri-lo
     if not os.path.exists(ARQ_FONTE):
         print(f"[ERRO] Arquivo '{ARQ_FONTE}' não encontrado.")
         return
 
-    instrucoes_geradas = []
-    x_atual = "0"
-    y_atual = "0"
+    instrucoes_geradas = []  # lista que acumulará as instruções no formato XYS
+    x_atual = "0"            # valor corrente de X (atualizado a cada X=<val> no fonte)
+    y_atual = "0"            # valor corrente de Y (atualizado a cada Y=<val> no fonte)
 
     with open(ARQ_FONTE, "r", encoding="utf-8") as f:
         for linha in f:
