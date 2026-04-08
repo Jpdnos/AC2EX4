@@ -24,20 +24,26 @@ bool modoExecucao = false;
 
 void setup() {
   Serial.begin(9600);
+  // Configura os 4 pinos dos LEDs como saida (pinos 13, 12, 11, 10)
   for (int i = 0; i < 4; i++) pinMode(leds[i], OUTPUT);
   Serial.println("Aguardando carga do programa");
 }
+
+// Converte um caractere hex ('0'-'F') para seu valor inteiro (0-15)
 int hexToVal(char c) {
   if (c >= '0' && c <= '9') return c - '0';
   if (c >= 'A' && c <= 'F') return c - 'A' + 10;
   if (c >= 'a' && c <= 'f') return c - 'a' + 10;
-  return 0;
+  return 0; // caractere inválido retorna 0
 }
+
+// Converte um valor inteiro (0-15) para seu caractere hex ('0'-'F')
 char valToHex(int v) {
-  v &= 0xF; 
+  v &= 0xF; // garante que o valor esta entre 0 e 15
   if (v < 10) return v + '0';
   return (v - 10) + 'A';
 }
+
 void mostrarNosLeds(int valor) {
   for (int i = 0; i < 4; i++) {
     digitalWrite(leds[i], (valor >> (3 - i)) & 0x01);
@@ -68,6 +74,11 @@ int calcularULA(int x, int y, int s) {
 }
 
 // FUNCAO DE DUMP COM O INDICADOR  
+// para exibir o estado da maquina atual no formato abaixo
+//            --
+// Memoria: | C6B | A3E |     |
+// Registradores: | 1 | 4 | C | 6 |
+
 void realizarDump() {
   int pc = registradores[0];
 
@@ -75,11 +86,11 @@ void realizarDump() {
   // "Memoria: |" tem 11 caracteres. O primeiro '--' deve alinhar com a instrução 0.
   Serial.print("           "); //  espaços para alinhar com o inicio do conteudo da barra
   for (int i = 0; i < pc; i++) {
-    Serial.print("      "); // espacos para cada instrucao já passada
+    Serial.print("      "); // espacos para cada instrucao ja passada
   }
   Serial.println("--");
 
-  // Imprime a linha da memoria
+  // Imprime a linha da memoria : exibe apenas as posicoes carregadas
   Serial.print("Memoria: | ");
   for (int i = 0; i < totalInstrucoes; i++) {
     Serial.print(memoria[i]);
@@ -87,7 +98,7 @@ void realizarDump() {
   }
   Serial.println("    |"); // Espaco vazio no final
 
-  // Imprime a linha dos registradores
+  // Imprime a linha dos registradores : PC, W, X e Y convertidos para hex
   Serial.print("Registradores: | ");
   for (int i = 0; i < 4; i++) {
     Serial.print(valToHex(registradores[i]));

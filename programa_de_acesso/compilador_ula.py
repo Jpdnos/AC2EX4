@@ -19,12 +19,12 @@ def eh_hex_valido(val):
 def compilar():
     # Verifica se o arquivo fonte existe antes de tentar abri-lo
     if not os.path.exists(ARQ_FONTE):
-        print(f"[ERRO] Arquivo '{ARQ_FONTE}' não encontrado.")
+        print(f"[ERRO] Arquivo '{ARQ_FONTE}' nao encontrado.")
         return
 
-    instrucoes_geradas = []  # lista que acumulará as instruções no formato XYS
-    x_atual = "0"            # valor corrente de X (atualizado a cada X=<val> no fonte)
-    y_atual = "0"            # valor corrente de Y (atualizado a cada Y=<val> no fonte)
+    instrucoes_geradas = []  # lista que acumulara as instrucoes no formato XYW
+    x_atual = "0"            # valor corrente de X (atualizado a cada X=<val> no arquivo fonte)
+    y_atual = "0"            # valor corrente de Y (atualizado a cada Y=<val> no arquivo fonte)
 
     with open(ARQ_FONTE, "r", encoding="utf-8") as f:
         for linha in f:
@@ -53,10 +53,10 @@ def compilar():
                     if eh_hex_valido(val):
                         y_atual = val.upper()
                 elif var == "W":
-                    # Busca case-insensitive no dicionario de mnemônicos.
+                    # Busca case-insensitive no dicionario de mnemonicos.
                     # Percorre todos os pares (mnemonico, codigo) e armazena o codigo
-                    # do mnemônico que bater com val (ignorando maiusculas/minusculas).
-                    # Se nao encontrar nenhum, cod_s permanece None e a linha será ignorada.
+                    # do mnemonico que bater com val (ignorando maiusculas/minusculas).
+                    # Se nao encontrar nenhum, cod_s permanece None e a linha sera ignorada.
                     cod_s = None
                     for mnem, codigo in MNEMONICOS.items():
                         if mnem.lower() == val.lower():
@@ -72,7 +72,7 @@ def compilar():
         with open(ARQ_HEX, "w", encoding="utf-8") as f_out:
             for item in instrucoes_geradas:
                 f_out.write(item + "\n")
-        print(f" Gerado '{ARQ_HEX}' com {len(instrucoes_geradas)} instruções.")
+        print(f" Gerado '{ARQ_HEX}' com {len(instrucoes_geradas)} instrucoes.")
     else:
         print(" Nenhuma instrucao valida encontrada.")
 
