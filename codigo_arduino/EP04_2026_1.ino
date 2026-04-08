@@ -4,7 +4,7 @@
  *  
  * Banco de Registradores - vetor com 4 posições:
  *
- * PC (Program Counter): Índice da próxima instrução a ser executada no vetor memória.
+ * PC (Program Counter/Banco de Registradores): Índice da próxima instrução a ser executada no vetor memória.
  * Comeca em 0 e e incrementado a cada instrucao executada.
  * 
  * W :Resultado da última operação executada pela ULA.
