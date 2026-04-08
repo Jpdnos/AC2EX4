@@ -19,11 +19,15 @@ python3 -m venv venv
 
 # Ativar o ambiente (Linux/macOS)
 source venv/bin/activate
+
+# Ativar o ambiente (Windows)
+venv\Scripts\activate
 ```
 
 3. Execute o script:
 
 ```bash
-python3 teste.py
+cd programa_de_acesso/
+python3 compilador_ula.py
 ```
 OBS.: O arquivo testeula.ula é apenas um arquivo de teste , para verificar se o programa tava funcionando.
