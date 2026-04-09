@@ -19,7 +19,7 @@ def eh_hex_valido(val):
 def compilar():
     # Verifica se o arquivo fonte existe antes de tentar abri-lo
     if not os.path.exists(ARQ_FONTE):
-        print(f"[ERRO] Arquivo '{ARQ_FONTE}' nao encontrado.")
+        print(f"ERRO Arquivo '{ARQ_FONTE}' nao encontrado.")
         return
 
     instrucoes_geradas = []  # lista que acumulara as instrucoes no formato XYW
