@@ -21,7 +21,7 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Ativar o ambiente (Windows)
-venv\Scripts\activate
+.\venv\bin\Activate.ps1
 ```
 
 3. Execute o script:
