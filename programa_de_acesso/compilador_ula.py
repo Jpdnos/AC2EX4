@@ -34,16 +34,21 @@ def compilar():
             # Ignora linhas totalmente vazias ou os marcadores de inicio/fim
             if not linha_limpa or linha_limpa.lower() in ["inicio:", "fim."]:
                 continue
-            # Processa as atribuicoes (X=, Y=, W=)
+            # Verifica se uma atribuicao (X=, Y=, W=)
             if "=" in linha_limpa:
+                # Divide a linha em [variavel, valor] pelo sinal de '='
                 partes = linha_limpa.split("=")
                 
                 # Ignora linhas malformadas como "X=" ou "W=" sem valor
+                # len retorna o tamanho da string, entao se for menor que 2, 
+                # significa que nao tem o valor apos o "="
+                # O strip() remove espacos, entao se o valor for apenas espacos,
+                # o strip() resultara em string vazia, e a linha sera ignorada
                 if len(partes) < 2 or not partes[1].strip():
                     continue
-
-                var = partes[0].strip().upper()
-                val = partes[1].strip()
+        
+                var = partes[0].strip().upper() # variavel: X, Y ou W (converte para maiusculo)
+                val = partes[1].strip() # Valor atribuido a variavel (hexadecimal : 0-F ou mnemonico: CopiaA, AxB, etc)
                 if var == "X":
                     # Se for invalido (X=G, X=12), ignora e mantem o X anterior
                     if eh_hex_valido(val):
@@ -61,7 +66,7 @@ def compilar():
                     for mnem, codigo in MNEMONICOS.items():
                         if mnem.lower() == val.lower():
                             cod_s = codigo
-                            break
+                            break #  mnemonico encontrado, encerra o loop
                     if cod_s:
                         # Gera a instrucao final de 3 caracteres (X + Y + S)
                         instrucao = f"{x_atual}{y_atual}{cod_s}"

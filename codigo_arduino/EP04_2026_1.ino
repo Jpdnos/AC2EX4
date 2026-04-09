@@ -7,7 +7,7 @@
  * PC (Program Counter/Banco de Registradores): Índice da próxima instrução a ser executada no vetor memória.
  * Comeca em 0 e e incrementado a cada instrucao executada.
  * 
- * W :Resultado da última operação executada pela ULA.
+ * W :Resultado da ultima operacao executada pela ULA.
  * 
  * X :Operando A (primeiro argumento) da última instrução executada.
  *
