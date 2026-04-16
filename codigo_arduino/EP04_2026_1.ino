@@ -60,7 +60,7 @@ void mostrarNosLeds(int valor) {
 
 int calcularULA(int x, int y, int s) {
   // nx e ny representam NOT A e NOT B
-  // O bitwise NOT (~) em C++ inverte todos os bits (incluindo o sinal),
+  // O bitwise NOT (~) inverte todos os bits (incluindo o sinal),
   // por isso o & 0xF e usado para manter apenas os 4 bits inferiores.
   int nx = (~x) & 0xF;
   int ny = (~y) & 0xF;
