@@ -120,23 +120,23 @@ void realizarDump() {
 }
 
 void loop() {
-  // Verifica se há dados na serial E se ainda nao estamos em modo de execução
+  // Verifica se tem dados na serial E se ainda nao estamos em modo de execucao
   // (durante a execucao e ignorado entradas seriais)
   if (Serial.available() > 0 && !modoExecucao) {
 
-    // Le toda a string recebida de uma vez e remove espaços/quebras de linha nas bordas
+    // Le toda a string recebida de uma vez e remove espacos/quebras de linha nas bordas
     String input = Serial.readString();
     input.trim();
 
     // Usuario respondeu "S" para iniciar a execução 
     if (input.equalsIgnoreCase("S")) {
       if (totalInstrucoes > 0) {
-        modoExecucao = true;   // ativa o modo de execução no próximo ciclo do loop
-        registradores[0] = 0; // garante que o PC começa do inicio da memoria
+        modoExecucao = true;   // ativa o modo de execucao no proximo ciclo do loop
+        registradores[0] = 0; // garante que o PC comeca do inicio da memoria
       }
     }
 
-    // Usuario enviou instruções para carregar na memoria 
+    // Usuario enviou instrucoes para carregar na memoria 
     else {
       int len = input.length();
 
@@ -144,24 +144,24 @@ void loop() {
       for (int i = 0; i <= len - 3; i++) {
         String code = input.substring(i, i + 3); // extrai a instrucao
 
-        // So armazena se nao houver espaço dentro dos 3 caracteres
-        // (espaco indicaria que pegamos partes de duas instruções separadas)
+        // So armazena se nao houver espaco dentro dos 3 caracteres
+        // (espaco indicaria que pegamos partes de duas instrucoes separadas)
         if (code.indexOf(' ') == -1) {
-          memoria[totalInstrucoes++] = code; // salva instrução na proxima posicao livre
-          i += 2; // avança mais 2 (o for já avança 1), pulando os outros chars dessa instrução
+          memoria[totalInstrucoes++] = code; // salva instrucao na proxima posicao livre
+          i += 2; // avanca mais 2 (o for ja avança 1), pulando os outros chars dessa instrucao
         }
       }
 
-      // Exibe o estado da memoria logo apos a carga para o usuário confirmar
+      // Exibe o estado da memoria logo apos a carga para o usuario confirmar
       Serial.println("Carga do vetor:");
       realizarDump();
 
-      // Aguarda confirmacao do usuário 
+      // Aguarda confirmacao do usuario 
       Serial.println("Deseja executar o programa (S/N)?");
     }
   }
 
-  // Modo de execucao ativo: processa uma instrução por ciclo do loop 
+  // Modo de execucao ativo: processa uma instrucao por ciclo do loop 
   if (modoExecucao) {
 
     // Ainda existem instrucoes a executar (PC nao ultrapassou o total carregado)
@@ -173,19 +173,19 @@ void loop() {
       // Busca na memoria a instrucao apontada pelo PC
       String instrucao = memoria[registradores[0]];
 
-      // Decodifica os tres algarismos da instrução: X (operando A), Y (operando B), S (operação)
+      // Decodifica os tres algarismos da instrucao: X (operando A), Y (operando B), S (operacao)
       int x = hexToVal(instrucao.charAt(0));
       int y = hexToVal(instrucao.charAt(1));
       int s = hexToVal(instrucao.charAt(2));
 
-      // Executa a operacao na ULA e obtém o resultado W
+      // Executa a operacao na ULA e obtem o resultado W
       int w = calcularULA(x, y, s);
 
-      // Atualiza o banco de registradores com os valores da instrução
+      // Atualiza o banco de registradores com os valores da instrucao
       registradores[2] = x;    // X: operando A usado
       registradores[3] = y;    // Y: operando B usado
       registradores[1] = w;    // W: resultado da ULA
-      registradores[0]++;      // PC: aponta para a proxima instrução
+      registradores[0]++;      // PC: aponta para a proxima instrucao
 
       // Resultado nos leds
       mostrarNosLeds(w);
