@@ -34,7 +34,7 @@ int hexToVal(char c) {
   if (c >= '0' && c <= '9') return c - '0';
   if (c >= 'A' && c <= 'F') return c - 'A' + 10;
   if (c >= 'a' && c <= 'f') return c - 'a' + 10;
-  return 0; // caractere inválido retorna 0
+  return 0; // caractere invalido retorna 0
 }
 
 // Converte um valor inteiro (0-15) para seu caractere hex ('0'-'F')
@@ -49,7 +49,19 @@ void mostrarNosLeds(int valor) {
     digitalWrite(leds[i], (valor >> (3 - i)) & 0x01);
   }
 }
+
+/**
+ * Executa a operação logica da ULA de 4 bits.
+ * @param x Operando A (4 bits)
+ * @param y Operando B (4 bits)
+ * @param s Seletor da operação (0-F)
+ * @return Resultado da operacao (mascarado para 4 bits)
+ */
+
 int calcularULA(int x, int y, int s) {
+  // nx e ny representam NOT A e NOT B
+  // O bitwise NOT (~) em C++ inverte todos os bits (incluindo o sinal),
+  // por isso o & 0xF e usado para manter apenas os 4 bits inferiores.
   int nx = (~x) & 0xF;
   int ny = (~y) & 0xF;
   switch (s) {
