@@ -87,6 +87,7 @@ X=INVALIDO;
 Y=INVALIDO;
 W=CopiaB;
 X=0;
+
 Y=0;
 W=CopiaA;
 X=1;
@@ -96,6 +97,7 @@ W=CopiaA;
 X=3;
 W=CopiaA;
 X=4;
+
 W=CopiaA;
 X=5;
 W=CopiaA;
