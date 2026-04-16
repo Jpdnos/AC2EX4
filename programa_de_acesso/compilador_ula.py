@@ -37,7 +37,7 @@ def compilar():
             # Verifica se uma atribuicao (X=, Y=, W=)
             if "=" in linha_limpa:
                 # Divide a linha em [variavel, valor] pelo sinal de '='
-                partes = linha_limpa.split("=")
+                partes = linha_limpa.split("=",1)
                 
                 # Ignora linhas malformadas como "X=" ou "W=" sem valor
                 # len retorna o tamanho da string, entao se for menor que 2, 
@@ -80,6 +80,7 @@ def compilar():
         print(f" Gerado '{ARQ_HEX}' com {len(instrucoes_geradas)} instrucoes.")
     else:
         print(" Nenhuma instrucao valida encontrada.")
+        return -1
 
 if __name__ == "__main__":
     compilar()
