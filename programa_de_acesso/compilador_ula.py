@@ -1,7 +1,7 @@
 import os
 
 # Configuracoes de arquivos
-ARQ_FONTE = "testeula.ula"
+ARQ_FONTE = "TESTEULA.ULA"
 ARQ_HEX = "testeula.hex"
 
 # Tabela de mnemonicos 
