@@ -64,7 +64,7 @@ def compilar():
                     # Se nao encontrar nenhum, cod_s permanece None e a linha sera ignorada.
                     cod_s = None
                     for mnem, codigo in MNEMONICOS.items():
-                        if mnem.lower() == val.lower():
+                        if mnem == val:
                             cod_s = codigo
                             break #  mnemonico encontrado, encerra o loop
                     if cod_s:
