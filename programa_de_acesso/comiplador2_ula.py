@@ -25,22 +25,14 @@ def compilar():
     instrucoes_geradas = []  # lista que acumulara as instrucoes no formato XYW
     x_atual = "0"            # valor corrente de X (atualizado a cada X=<val> no arquivo fonte)
     y_atual = "0"            # valor corrente de Y (atualizado a cada Y=<val> no arquivo fonte)
-    linhas_com_erro = []     # acumula (num_linha, conteudo, motivo)
 
     with open(ARQ_FONTE, "r", encoding="utf-8") as f:
-        for num_linha, linha in enumerate(f, start=1):  # enumerate para rastrear numero da linha
+        for linha in f:
             # Remove espacos e o ponto e virgula
             linha_limpa = linha.strip().replace(";", "")
             
             # Ignora linhas totalmente vazias ou os marcadores de inicio/fim
-            if not linha_limpa:
-                conteudo_original = linha.strip()
-                if conteudo_original:  # tinha algo (ex: ";"), mas virou vazio apos limpeza
-                    linhas_com_erro.append((num_linha, linha.rstrip(), "conteudo invalido (apenas ';' ou espacos)"))
-                else:
-                    linhas_com_erro.append((num_linha, "(vazia)", "linha vazia"))
-                continue
-            if linha_limpa.lower() in ["inicio:", "fim."]:
+            if not linha_limpa or linha_limpa.lower() in ["inicio:", "fim."]:
                 continue
             # Verifica se uma atribuicao (X=, Y=, W=)
             if "=" in linha_limpa:
@@ -53,7 +45,6 @@ def compilar():
                 # O strip() remove espacos, entao se o valor for apenas espacos,
                 # o strip() resultara em string vazia, e a linha sera ignorada
                 if len(partes) < 2 or not partes[1].strip():
-                    linhas_com_erro.append((num_linha, linha.rstrip(), "atribuicao sem valor (ex: 'X=')"))
                     continue
         
                 var = partes[0].strip().upper() # variavel: X, Y ou W (converte para maiusculo)
@@ -62,14 +53,10 @@ def compilar():
                     # Se for invalido (X=G, X=12), ignora e mantem o X anterior
                     if eh_hex_valido(val):
                         x_atual = val.upper()
-                    else:
-                        linhas_com_erro.append((num_linha, linha.rstrip(), f"valor hex invalido para X: '{val}'"))
                 elif var == "Y":
                     # Se for invalido, ignora e mantem o Y anterior
                     if eh_hex_valido(val):
                         y_atual = val.upper()
-                    else:
-                        linhas_com_erro.append((num_linha, linha.rstrip(), f"valor hex invalido para Y: '{val}'"))
                 elif var == "W":
                     # Busca case-insensitive no dicionario de mnemonicos.
                     # Percorre todos os pares (mnemonico, codigo) e armazena o codigo
@@ -84,22 +71,7 @@ def compilar():
                         # Gera a instrucao final de 3 caracteres (X + Y + S)
                         instrucao = f"{x_atual}{y_atual}{cod_s}"
                         instrucoes_geradas.append(instrucao)
-                    else:
-                        linhas_com_erro.append((num_linha, linha.rstrip(), f"mnemonico desconhecido: '{val}'"))
-                else:
-                    linhas_com_erro.append((num_linha, linha.rstrip(), f"variavel desconhecida: '{var}'"))
-            else:
-                linhas_com_erro.append((num_linha, linha.rstrip(), "linha sem '=' e nao reconhecida"))
 
-     # Relatorio de erros: exibe todas as linhas problematicas encontradas durante a compilacao
-    if linhas_com_erro:
-        print(f"\n{'='*50}")
-        print(f" {len(linhas_com_erro)} linha(s) com problema encontrada(s):")  # quantidade total de erros
-        print(f"{'='*50}")
-        for num, conteudo, motivo in linhas_com_erro:  # desempacota a tupla (num_linha, conteudo, motivo)
-            print(f"  Linha {num:>4}: {motivo}")   # num:>4 alinha o numero a direita em 4 espacos
-            print(f"           >> {conteudo}")      # exibe o conteudo original da linha com erro
-        print(f"{'='*50}\n")
     # Gravacao do arquivo .hex
     if instrucoes_geradas:
         with open(ARQ_HEX, "w", encoding="utf-8") as f_out:
