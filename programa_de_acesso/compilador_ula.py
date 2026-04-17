@@ -12,9 +12,22 @@ MNEMONICOS = {
     "nAeB": "C", "AenB": "D", "AoB": "E", "nAenB": "F",
 }
 
-def eh_hex_valido(val):
-    # Valida se o valor e um unico digito hexadecimal (0-F).
-    return len(val) == 1 and val.upper() in "0123456789ABCDEF"
+def converter_valor(val):
+    try:
+        # Tenta converter a string para um número decimal
+        num = int(val)
+        # Verifica se o número cabe em 4 bits (0 a 15)
+        if 0 <= num <= 15:
+            # Converte para Hexadecimal e remove o prefixo '0x'
+            return hex(num)[2:].upper()
+    except ValueError:
+        # Se não for um número decimal (ex: 'A', 'F'), valida se é um hex único
+        val = val.upper()
+        if len(val) == 1 and val in "0123456789ABCDEF":
+            return val
+    
+    return None # Valor inválido
+
 
 def compilar():
     # Verifica se o arquivo fonte existe antes de tentar abri-lo
@@ -59,17 +72,18 @@ def compilar():
                 var = partes[0].strip().upper() # variavel: X, Y ou W (converte para maiusculo)
                 val = partes[1].strip() # Valor atribuido a variavel (hexadecimal : 0-F ou mnemonico: CopiaA, AxB, etc)
                 if var == "X":
-                    # Se for invalido (X=G, X=12), ignora e mantem o X anterior
-                    if eh_hex_valido(val):
-                        x_atual = val.upper()
+                    res = converter_valor(val)
+                    if res:
+                        x_atual = res
                     else:
-                        linhas_com_erro.append((num_linha, linha.rstrip(), f"valor hex invalido para X: '{val}'"))
+                        linhas_com_erro.append((num_linha, linha.rstrip(), f"Valor inválido para X: '{val}' (deve ser 0-15 ou 0-F)"))
+
                 elif var == "Y":
-                    # Se for invalido, ignora e mantem o Y anterior
-                    if eh_hex_valido(val):
-                        y_atual = val.upper()
+                    res = converter_valor(val)
+                    if res:
+                        y_atual = res
                     else:
-                        linhas_com_erro.append((num_linha, linha.rstrip(), f"valor hex invalido para Y: '{val}'"))
+                        linhas_com_erro.append((num_linha, linha.rstrip(), f"Valor inválido para Y: '{val}' (deve ser 0-15 ou 0-F)"))
                 elif var == "W":
                     # Busca case-insensitive no dicionario de mnemonicos.
                     # Percorre todos os pares (mnemonico, codigo) e armazena o codigo
